@@ -22,7 +22,11 @@ const AddtoDoModule = ({setShowAddToDoModal, todos }) => {
     setShowAddToDoModal(false)
   };
   return (
-    <View style={tw`bg-white p-4 rounded-md shadow shadow-gray-500 w-[90%]`}>
+    <View style={tw`bg-white p-4 rounded-md shadow shadow-gray-500 w-[100%] relative`}>
+      <View style={tw`w-[100%] flex absolute top-1 right-4  justify-center items-center`}>
+        <View style={tw`p-1 bg-gray-600 rounded-xl w-[30%]`}></View>
+      </View>
+
       <Text style={tw`text-2xl font-semibold p-3`}>Adding Snippets here</Text>
 
       <View style={tw`my-3`}>
@@ -31,7 +35,7 @@ const AddtoDoModule = ({setShowAddToDoModal, todos }) => {
           onChangeText={setTitle}
           value={title}
           placeholder="Enter Title here"
-          keyboardType="text"
+          keyboardType="default"
         />
         <TextInput
           style={tw`${textinputStyle} mt-2`}
@@ -40,7 +44,7 @@ const AddtoDoModule = ({setShowAddToDoModal, todos }) => {
           placeholder="Enter Description here"
           multiline
           numberOfLines={3}
-          keyboardType="text"
+          keyboardType="default"
         />
       </View>
 

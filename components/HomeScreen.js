@@ -13,6 +13,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {addTodo, setTodolist} from '../redux/todoSlice';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AddtoDoModule from './AddtoDoModule';
+import firestore from '@react-native-firebase/firestore';
 
 const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -25,11 +26,40 @@ const HomeScreen = ({navigation}) => {
     setTodos(data);
   }, [data]);
 
+  // const addDataToDatabase = async data => {
 
-  const deleteTodo = (id)=>{
-    const newToDosArray = todos.filter(todo => todo.id !== id)
-    dispatch(setTodolist(newToDosArray))
-  }
+  //   try {
+  //     const res = await database("")
+  //       .ref('userTodos')
+  //       .push({name: 'Himanshu', task: 'React Native'});
+  //     console.log(res, 'check res');
+  //   } catch (error) {
+  //     console.log(error.message, 'check error message');
+  //   }
+  // };
+  const addData = async data => {
+    try {
+      // Get Firestore instance
+      const db = firestore();
+
+      // Define collection and document
+      const collectionRef = db.collection('userTodos');
+
+      // Add data to document
+      await collectionRef
+        .doc()
+        .set({name: 'Adhishek', task: 'React Native backend'});
+
+      console.log('Data added successfully!');
+    } catch (error) {
+      console.error('Error adding data:', error);
+    }
+  };
+
+  const deleteTodo = id => {
+    const newToDosArray = todos.filter(todo => todo.id !== id);
+    dispatch(setTodolist(newToDosArray));
+  };
 
   return (
     <View style={tw`h-full flex flex-col items-center justify-start`}>
@@ -57,7 +87,8 @@ const HomeScreen = ({navigation}) => {
 
       <TouchableOpacity>
         <Pressable
-          onPress={() => setShowAddToDoModal(!showAddTodoModal)}
+          onPress={() => addData()}
+          // onPress={() => setShowAddToDoModal(!showAddTodoModal)}
           style={tw`bg-violet-800 py-2 px-5 mt-5 rounded-md`}>
           <Text style={tw`text-base text-white`}>Add</Text>
         </Pressable>
@@ -68,7 +99,9 @@ const HomeScreen = ({navigation}) => {
           style={tw`flex flex-col h-[80%] mt-3 gap-3 items-center w-full overflow`}>
           {todos?.map((item, index) => {
             return (
-              <View key={index} style={tw`flex flex-col gap-2 w-[95%] items-center border border-gray-300 rounded bg-violet-100`}>
+              <View
+                key={index}
+                style={tw`flex flex-col gap-2 w-[95%] items-center border border-gray-300 rounded bg-violet-100`}>
                 <View
                   style={tw`flex flex-row items-center justify-between p-2 shadow shadow-gray-300`}>
                   <View style={tw`flex flex-col gap-1 items-start w-[85%]`}>
@@ -89,7 +122,7 @@ const HomeScreen = ({navigation}) => {
                 </View>
 
                 <View style={tw`gap-1 flex-row items-end justify-end w-full`}>
-                  <Pressable style={tw``} onPress={()=>deleteTodo(item.id)}>
+                  <Pressable style={tw``} onPress={() => deleteTodo(item.id)}>
                     <Icon
                       name="delete-forever"
                       color="red"
@@ -98,11 +131,7 @@ const HomeScreen = ({navigation}) => {
                   </Pressable>
 
                   <Pressable style={tw``}>
-                    <Icon
-                      name="pencil"
-                      color="gray"
-                      style={tw`text-xl`}
-                    />
+                    <Icon name="pencil" color="gray" style={tw`text-xl`} />
                   </Pressable>
                 </View>
               </View>

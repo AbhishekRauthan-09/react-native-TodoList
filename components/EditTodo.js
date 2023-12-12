@@ -1,57 +1,50 @@
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  CheckBox,
-  Pressable,
-  ToastAndroid,
-} from 'react-native';
+import {View, Text, Pressable, TextInput, ToastAndroid} from 'react-native';
 import React, {useState} from 'react';
-import tw from 'twrnc';
-import {useDispatch} from 'react-redux';
-import {addTodo} from '../redux/todoSlice';
-import {addToDo} from './Apis';
+import {editToDo} from './Apis';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import tw from 'twrnc';
 
-const AddtoDoModule = ({setShowAddToDoModal, todos, setRefetchTodos}) => {
-  // const dispatch = useDispatch();
-  const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
+const EditTodo = ({setshowEditTodoModal, data, setRefetchTodos}) => {
   const textinputStyle = 'p-2 border border-gray-400 rounded ';
+  const [title, setTitle] = useState(data.title || '');
+  const [desc, setDesc] = useState(data.desc || '');
 
-  const addItem = () => {
+  const editItem = async () => {
+    const body = {
+      ...data,
+      title,
+      desc,
+    };
+
     if (title.length < 5 || desc.length < 15) {
       ToastAndroid.show('Enter valid title and desc', ToastAndroid.SHORT);
       return;
     }
 
-    const newItem = {
-      title,
-      desc,
-      done: false,
-    };
-
-    addToDo(newItem);
-    setShowAddToDoModal(false);
-    setRefetchTodos({});
-    ToastAndroid.show('Todo added successfully', ToastAndroid.SHORT);
+    const {success} = await editToDo(body);
+    if (success) {
+      setRefetchTodos({});
+      setshowEditTodoModal(false);
+      ToastAndroid.show('Edited Successfully!', ToastAndroid.SHORT);
+    } else {
+      ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+    }
   };
   return (
     <View
       style={tw`bg-white p-4 rounded-md shadow shadow-gray-500 w-[100%] relative`}>
+      <Pressable
+        style={tw`items-end absolute right-0`}
+        onPress={() => setshowEditTodoModal(false)}>
+        <Icon name="close" color="red" style={tw`text-2xl`} />
+      </Pressable>
+
       <View
         style={tw`w-[100%] flex absolute top-1 right-4  justify-center items-center`}>
         <View style={tw`p-1 bg-gray-600 rounded-xl w-[30%]`}></View>
       </View>
 
-      <Pressable
-        style={tw`items-end absolute right-0`}
-        onPress={() => setShowAddToDoModal(false)}>
-        <Icon name="close" color="red" style={tw`text-2xl`} />
-      </Pressable>
-
-      <Text style={tw`text-2xl font-semibold p-3`}>Adding Snippets here</Text>
+      <Text style={tw`text-2xl font-semibold p-3 mt-2`}>Editing Todo.</Text>
 
       <View style={tw`my-3`}>
         <TextInput
@@ -73,12 +66,12 @@ const AddtoDoModule = ({setShowAddToDoModal, todos, setRefetchTodos}) => {
       </View>
 
       <Pressable
-        onPress={() => addItem()}
+        onPress={() => editItem()}
         style={tw`bg-violet-800 py-2 px-5 mt-5 rounded-md`}>
-        <Text style={tw`text-base text-white text-center text-base`}>Add</Text>
+        <Text style={tw`text-base text-white text-center text-base`}>Save</Text>
       </Pressable>
     </View>
   );
 };
 
-export default AddtoDoModule;
+export default EditTodo;

@@ -6,6 +6,7 @@ import HomeScreen from './components/HomeScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import { store } from './store';
 import { Provider } from 'react-redux';
+import VideoPlayerComponent from './components/VideoPlayerComponent';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Video" component={VideoPlayerComponent} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

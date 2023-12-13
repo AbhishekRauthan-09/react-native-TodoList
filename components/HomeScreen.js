@@ -127,6 +127,14 @@ const HomeScreen = ({navigation}) => {
         </Pressable>
       </TouchableOpacity>
 
+      <TouchableOpacity>
+        <Pressable
+          onPress={() => navigation.navigate('Video')}
+          style={tw`bg-violet-800 py-2 px-5 mt-5 rounded-md`}>
+          <Text style={tw`text-base text-white`}>Go to video</Text>
+        </Pressable>
+      </TouchableOpacity>
+
       <ScrollView>
         <View style={tw`flex flex-col h-[80%] mt-3 gap-3 items-center w-full`}>
           {todos?.length > 0 ? (

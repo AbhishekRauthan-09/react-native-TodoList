@@ -6,7 +6,8 @@ import {
   Pressable,
   ScrollView,
   Modal,
-  ToastAndroid
+  ToastAndroid,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import tw from 'twrnc';
@@ -39,8 +40,7 @@ const HomeScreen = ({navigation}) => {
     if (success) {
       ToastAndroid.show('Deleted Successfully!', ToastAndroid.SHORT);
       setRefetchTodos({});
-    }
-    else{
+    } else {
       ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
     }
   };
@@ -135,75 +135,114 @@ const HomeScreen = ({navigation}) => {
         </Pressable>
       </TouchableOpacity>
 
-      <ScrollView>
-        <View style={tw`flex flex-col h-[80%] mt-3 gap-3 items-center w-full`}>
-          {todos?.length > 0 ? (
-            todos?.map((item, index) => {
-              return (
+      <View style={tw`w-full flex flex-row justify-center bg-red-500`}>
+        <FlatList
+          data={todos}
+          style={tw`p-2 mt-4 max-w-[90%] bg-gray-500`}
+          horizontal
+          renderItem={({item}) => {
+            return (
+              <>
+                {console.log('item is', item?.title)}
                 <View
-                  key={index}
-                  style={tw`flex flex-col gap-2 w-[95%] items-center border border-gray-300 rounded bg-violet-100`}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowTodoItem(true), setSelectedTodoItem(item);
-                    }}>
-                    <View
-                      style={tw`flex flex-row items-center justify-between p-2 shadow shadow-gray-300`}>
-                      <View style={tw`flex flex-col gap-1 items-start w-[85%]`}>
-                        <Text
-                          style={tw`text-violet-900 font-semibold capitalize text-xl`}>
-                          {item.title}
-                        </Text>
-                        {/* <Text style={tw`text-gray-500 text-base`}>{item.desc}</Text> */}
-                      </View>
-
-                      <View style={tw`w-[15%]`}>
-                        {item?.done ? (
-                          <Icon name="check" size={30} color="green" />
-                        ) : (
-                          <Icon name="timer-outline" size={30} color="gray" />
-                        )}
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-
-                  <View
-                    style={tw`gap-4 flex-row items-end justify-between w-full bg-white`}>
-                    <View style={tw`flex flex-row gap-3`}>
-                      <Pressable
-                        style={tw``}
-                        onPress={() => deleteTodo(item.docId)}>
-                        <Icon
-                          name="delete-forever"
-                          color="red"
-                          style={tw`text-xl`}
-                        />
-                      </Pressable>
-
-                      <Pressable
-                        style={tw``}
-                        onPress={() => {
-                          setSelectedTodoItem(item), setshowEditTodoModal(true);
-                        }}>
-                        <Icon name="pencil" color="gray" style={tw`text-xl`} />
-                      </Pressable>
-                    </View>
-
-                    <Text style={tw`text-base text-gray-500`}>{moment(item.date).format("DD/MM/YYYY hh:mm a")}</Text>
-                  </View>
+                  style={{
+                    height: 200,
+                    width: 300,
+                    borderWidth: 2,
+                    borderColor: 'gray',
+                  }}>
+                  <Text>{item?.title}</Text>
                 </View>
-              );
-            })
-          ) : (
-            <Text
-              style={tw`flex-1 items-center justify-center mt-10 text-3xl text-center w-full text-violet-300 font-semibold`}>
-              No Todos Added
-            </Text>
-          )}
-        </View>
-      </ScrollView>
+              </>
+            );
+          }}
+          keyExtractor={item => item.docId}
+          ItemSeparatorComponent={() => {
+            return (
+              <>
+                <View
+                  style={{
+                    padding: 10,
+                  }}></View>
+              </>
+            );
+          }}
+        />
+      </View>
     </View>
   );
 };
 
 export default HomeScreen;
+
+const item = () => {
+  <ScrollView>
+    <View style={tw`flex flex-col h-[80%] mt-3 gap-3 items-center w-full`}>
+      {todos?.length > 0 ? (
+        todos?.map((item, index) => {
+          return (
+            <View
+              key={index}
+              style={tw`flex flex-col gap-2 w-[95%] items-center border border-gray-300 rounded bg-violet-100`}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowTodoItem(true), setSelectedTodoItem(item);
+                }}>
+                <View
+                  style={tw`flex flex-row items-center justify-between p-2 shadow shadow-gray-300`}>
+                  <View style={tw`flex flex-col gap-1 items-start w-[85%]`}>
+                    <Text
+                      style={tw`text-violet-900 font-semibold capitalize text-xl`}>
+                      {item.title}
+                    </Text>
+                    {/* <Text style={tw`text-gray-500 text-base`}>{item.desc}</Text> */}
+                  </View>
+
+                  <View style={tw`w-[15%]`}>
+                    {item?.done ? (
+                      <Icon name="check" size={30} color="green" />
+                    ) : (
+                      <Icon name="timer-outline" size={30} color="gray" />
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <View
+                style={tw`gap-4 flex-row items-end justify-between w-full bg-white`}>
+                <View style={tw`flex flex-row gap-3`}>
+                  <Pressable
+                    style={tw``}
+                    onPress={() => deleteTodo(item.docId)}>
+                    <Icon
+                      name="delete-forever"
+                      color="red"
+                      style={tw`text-xl`}
+                    />
+                  </Pressable>
+
+                  <Pressable
+                    style={tw``}
+                    onPress={() => {
+                      setSelectedTodoItem(item), setshowEditTodoModal(true);
+                    }}>
+                    <Icon name="pencil" color="gray" style={tw`text-xl`} />
+                  </Pressable>
+                </View>
+
+                <Text style={tw`text-base text-gray-500`}>
+                  {moment(item.date).format('DD/MM/YYYY hh:mm a')}
+                </Text>
+              </View>
+            </View>
+          );
+        })
+      ) : (
+        <Text
+          style={tw`flex-1 items-center justify-center mt-10 text-3xl text-center w-full text-violet-300 font-semibold`}>
+          No Todos Added
+        </Text>
+      )}
+    </View>
+  </ScrollView>;
+};
